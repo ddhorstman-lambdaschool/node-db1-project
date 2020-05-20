@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 module.exports = {
   development: {
     client: "sqlite3",
@@ -18,10 +20,10 @@ module.exports = {
   production: {
     client: "pg",
     connection: {
-      host: "localhost", // if the server is not running on your computer provide the network address
-      database: "the name of the database to use in the postgres server", // <-- update
-      user: "a user that has access to the server and database", // <-- update
-      password: "the password for the user", // <-- update
+      host: "localhost",
+      database: "node-db1-project",
+      user: process.env.USERNAME,
+      password: process.env.PASSWORD,
     },
     pool: {
       min: 2,
