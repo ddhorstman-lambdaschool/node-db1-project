@@ -92,6 +92,8 @@ router.delete(
 /*----------------------------------------------------------------------------*/
 /* Middleware
 /*----------------------------------------------------------------------------*/
+
+//Don't call directly! Wrap in catchAsync before using
 async function validateAccountID(req, res, next) {
   const { id } = req.params;
   //accounts returned as an array
