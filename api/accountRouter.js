@@ -14,13 +14,9 @@ router.get(
   })
 );
 
-router.get(
-  "/:id",
-  validateID,
-  catchAsync(async (req, res) => {
-    res.status(200).json(req.account);
-  })
-);
+router.get("/:id", validateID, (req, res) => {
+  res.status(200).json(req.account);
+});
 
 /*----------------------------------------------------------------------------*/
 /* POST
@@ -29,14 +25,14 @@ router.post(
   "/",
   validateAccount,
   catchAsync(async (req, res, next) => {
-    //results are returned as an array
-    const [result] = await knex("accounts").insert(req.body,["id"]);
+    //results are returned as an array - we just want the first entry
+    const [result] = await knex("accounts").insert(req.body, ["id"]);
     //PostgreSQL returns an object with an ID property
     //SQLITE just returns the ID
     const id = result.id || result;
-      id
-        ? res.status(201).json(await knex("accounts").where({ id }))
-        : next(new AppError("Error adding the item to the database.", 500));
+    id
+      ? res.status(201).json(await knex("accounts").where({ id }))
+      : next(new AppError("Error adding the item to the database.", 500));
   })
 );
 
@@ -99,7 +95,7 @@ router.delete(
 //Don't call directly! Wrap in catchAsync before using
 async function validateAccountID(req, res, next) {
   const { id } = req.params;
-  //accounts returned as an array
+  //accounts are returned as an array - we just want the first entry
   const [account] = await knex("accounts").where({ id });
   req.account = account;
   account ? next() : next(new AppError(`${id} is not a valid account ID`, 404));
