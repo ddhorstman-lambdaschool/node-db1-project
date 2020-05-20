@@ -29,11 +29,14 @@ router.post(
   "/",
   validateAccount,
   catchAsync(async (req, res, next) => {
-    //inserted ids returned as an array
-    const [id] = await knex("accounts").insert(req.body);
-    id
-      ? res.status(201).json(await knex("accounts").where({ id }))
-      : next(new AppError("Error adding the item to the database.", 500));
+    //results are returned as an array
+    const [result] = await knex("accounts").insert(req.body,["id"]);
+    //PostgreSQL returns an object with an ID property
+    //SQLITE just returns the ID
+    const id = result.id || result;
+      id
+        ? res.status(201).json(await knex("accounts").where({ id }))
+        : next(new AppError("Error adding the item to the database.", 500));
   })
 );
 
@@ -60,8 +63,8 @@ router.patch(
   "/:id",
   validateID,
   function addExistingFields(req, res, next) {
-    const { id, ...oldAccount } = req.account;
-    req.body = { ...oldAccount, ...req.body };
+    const { id, name, budget, ...rest } = req.account;
+    req.body = { name, budget: Number(budget), ...rest, ...req.body };
     next();
   },
   validateAccount,

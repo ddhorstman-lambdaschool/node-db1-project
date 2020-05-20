@@ -20,8 +20,8 @@ module.exports = {
   production: {
     client: "pg",
     connection: {
-      host: "localhost",
-      database: "node-db1-project",
+      host: process.env.HOSTNAME,
+      database: process.env.DATABASE,
       user: process.env.USERNAME,
       password: process.env.PASSWORD,
     },
